@@ -2219,11 +2219,12 @@ function jtBMoney(x){return jtMoneyInput(x)}
 // Parser de linhas agrupadas por coordenada do PDF. Em divergências, exige revisão manual.
 function jtParseBaixasRows(lines,fileName){
  let cliente='',section='',rows=[],pending='',period='';
- const known=jtBaixaClientNames();
+ const known=[...new Set([...jtBaixaClientNames(),...(db.prospects||[]).map(p=>String(p.nome||p.razaoSocial||'').trim()).filter(Boolean)])];
  for(let i=0;i<lines.length;i++){
   const line=String(lines[i]||'').replace(/\u00a0/g,' ').replace(/\s+/g,' ').trim();if(!line)continue;
   if(/Baixa De:\s*\d\d\/\d\d\/\d{4}/i.test(line)){period=(line.match(/Baixa De:\s*([\d/]+).*?Baixa At[eé]:\s*([\d/]+)/i)||[]).slice(1).join(' a ');continue}
   const maybe=known.find(n=>jtBaixaNorm(n)===jtBaixaNorm(line));if(maybe){cliente=maybe;section='';continue}
+  if(!/^\d\d\/\d\d\/\d{4}/.test(line)&&line.length>=8&&line.length<=140&&/\b(?:LTDA|EIRELI|S\/?A|S A|DISTRIBUIDORA|INDUSTRIA|COMERCIO)\b/i.test(line)&&!/^total\b/i.test(line)){cliente=line;section='';continue}
   if(/^(Baixado|Recomprado|Recomprado Parcial)\s*$/i.test(line)){section=line.trim();continue}
   if(/^Total (?:de|Cliente)|^LiveWork|^FINTRUST|^Documentos Baixados|^Baixa\s+Vencto|^Agente:/i.test(line))continue;
   const datePrefix=line.match(/^(\d\d\/\d\d\/\d{4})\s+(\d\d\/\d\d\/\d{4})\s+(.+)$/);
@@ -2521,5 +2522,7 @@ function start(){if(addUI())return;const ob=new MutationObserver(()=>{if(addUI()
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
 </script>
+<link rel="stylesheet" href="/liquidacoes.css">
+<script src="/liquidacoes.js"></script>
 <script defer src="/jarvis4.js"></script>
 </body></html>
