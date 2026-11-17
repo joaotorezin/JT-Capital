@@ -2422,11 +2422,14 @@ body.jt51-editing [data-jt51-edit]:hover{background:color-mix(in srgb,var(--prim
 .jt51-required-mark{color:#dc2626;margin-left:2px}
 @media (max-width:820px){.jt51-field-row{grid-template-columns:auto auto 1fr}.jt51-field-row>select{grid-column:3}.jt51-new-field{grid-template-columns:1fr}.jt51-edit-btn .jt51-txt{display:none}}
 @media (prefers-reduced-motion:reduce){.jt51-pop,.jt51-banner{transition:none}}
+#jt4Favorites{margin-left:var(--sidebar-width,258px)!important;padding-left:34px!important;padding-right:34px!important;box-sizing:border-box;transition:margin-left .18s ease}
+@media (max-width:1200px){#jt4Favorites{padding-left:19px!important;padding-right:19px!important}}
+@media (max-width:850px){#jt4Favorites{padding-left:16px!important;padding-right:16px!important}}
 </style>
 <script>
 (function(){
 'use strict';
-const VERSION='5.1';
+const VERSION='5.1.1';
 const STATIC_FORM={pCnpj:'cnpj',pTel:'tel',pEnd:'end',pContato:'contato',pAcao:'acao',pData:'data',pObs:'obs'};
 const DASH_DEFAULT_NAMES={vop:'VOP',receita:'Receita',tac:'TAC',comissao:'Comissão',ops:'Operações',prospects:'Prospects',conv:'Conversão'};
 const TYPE_NAMES={text:'Texto',number:'Número',currency:'Moeda',date:'Data',select:'Lista',boolean:'Sim/Não',textarea:'Texto longo'};
@@ -2675,6 +2678,7 @@ window.jt51RestoreNames=async function(){
 };
 
 /* ---------- liga tudo ---------- */
+try{if(typeof jtNavCore!=='undefined'&&Array.isArray(jtNavCore)&&!jtNavCore.some(x=>x[0]==='meusGanhos')){const i=jtNavCore.findIndex(x=>x[0]==='comissoesOps');jtNavCore.splice(i>=0?i+1:jtNavCore.length,0,['meusGanhos','Meus Ganhos'])}}catch(e){}
 if(typeof window.applyMenu==='function'){const origAM=window.applyMenu;window.applyMenu=function(){const r=origAM.apply(this,arguments);try{applyAll()}catch(e){}return r}}
 if(typeof window.renderSettings==='function'){const origRS=window.renderSettings;window.renderSettings=function(){const r=origRS.apply(this,arguments);try{renderFieldEditor();renderDashEditor();renderNamesCard()}catch(e){console.error(e)}return r}}
 if(typeof window.showPage==='function'){const origSP=window.showPage;window.showPage=function(page){if(editing)closePop();const r=origSP.apply(this,arguments);if(page==='prospeccao')syncStaticForm(true);queueApply();return r}}
